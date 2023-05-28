@@ -4,51 +4,38 @@
 template<typename T>
 class BST {
  private:
-  struct Node {
-    T value;
-    int count;
-    Node *l;
-    Node *r;
-  };
-  Node *root;
-  Node* addNode(Node *root, T v) {
-    if (!root) {
-      root = new Node;
-      root->value = v;
-      root->l = root->r = nullptr;
-    } else if (root->value > v) {
-      root->l = addNode(root->l, v);
-    } else if (root->value < v) {
-      root->r = addNode(root->r, v);
-    } else {
-      (root->count)++;
+    struct Node {
+        T value;
+        int count;
+        Node* left, * right;
+    };
+    Node* root;
+    Node* addNode(Node* root, const T& value) {
+        if (root == nullptr) {
+            root = new Node;
+            root->value = value;
+            root->count = 1;
+            root->left = root->right = nullptr;
+        } else if (root->value > value) {
+            root->left = addNode(root->left, value);
+        } else if (root->value < value) {
+            root->right = addNode(root->right, value);
+        } else {
+            root->count += 1;
+        }
+        return root;
     }
-    return root;
-  }
-  int searchValue(Node* root, T v) {
-    if (!root) {
-      return 0;
-    } else if (root->value == v) {
-      return root->count;
-    } else if (root->value > v) {
-      return searchValue(root->l, v);
-    } else {
-      return searchValue(root->r, v);
+    Node* searchNode(Node* root, const T& value) {
+        if (root == nullptr || root->value == value) return root;
+        if (value < root->value) return searchNode(root->left, value);
+        return searchNode(root->right, value);
     }
-  }
-  int heightTree(Node* root) {
-    if (!root) {
-      return 0;
+    int getDepth(Node* root) {
+        if (root == nullptr) return 0;
+        return std::max(getDepth(root->left), getDepth(root->right)) + 1;
     }
-    int L = heightTree(root->l);
-    int R = heightTree(root->r);
-    if (L > R) {
-      return (L + 1);
-    } else {
-      return (R + 1);
-    }
-  }
   
+
  public:
   BST() :root(nullptr) {}
   void add(T v) {
